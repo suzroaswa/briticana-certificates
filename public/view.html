@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Briticana Certificate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background: #e2e8f0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 60px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1e293b;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .header p {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    /* ========== CERTIFICATE ========== */
+    #certificate-wrapper {
+      background: white;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+      margin-bottom: 28px;
+      /* Keep fixed aspect for accurate rendering */
+    }
+
+    #certificate {
+      width: 1000px;
+      height: 707px;
+      background: #ffffff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Double border matching original */
+    .border-outer {
+      position: absolute;
+      inset: 14px;
+      border: 3.5px solid #1a365d;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .border-inner {
+      position: absolute;
+      inset: 22px;
+      border: 1.5px solid #1a365d;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Large faint B watermark */
+    .watermark {
+      position: absolute;
+      top: 46%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 340px;
+      opacity: 0.07;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      padding: 52px 78px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .title {
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: 46px;
+      color: #1a365d;
+      line-height: 1.1;
+      margin-bottom: 18px;
+      letter-spacing: 0.5px;
+    }
+
+    .presented {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13.5px;
+      letter-spacing: 3.2px;
+      text-transform: uppercase;
+      color: #475569;
+      margin-bottom: 14px;
+      font-weight: 600;
+    }
+
+    .candidate-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: #0f172a;
+      border-bottom: 1.5px solid #1a365d;
+      padding-bottom: 5px;
+      margin-bottom: 8px;
+      display: inline-block;
+      min-width: 260px;
+    }
+
+    .body-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15.5px;
+      line-height: 1.58;
+      color: #334155;
+      max-width: 740px;
+      margin-top: 18px;
+    }
+    .body-text strong {
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    /* Footer area */
+    .footer-area {
+      position: absolute;
+      bottom: 48px;
+      left: 70px;
+      right: 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      z-index: 3;
+    }
+
+    .barcode-area {
+      width: 175px;
+      height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    #barcodeCanvas {
+      max-width: 168px;
+      max-height: 74px;
+      image-rendering: pixelated;
+    }
+
+    .logo-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .logo-area img {
+      width: 88px;
+      height: auto;
+    }
+
+    .signature-area {
+      width: 195px;
+      text-align: center;
+    }
+    .signature-area img {
+      height: 48px;
+      width: auto;
+      margin-bottom: 1px;
+    }
+    .sig-line {
+      border-top: 1px solid #94a3b8;
+      margin: 2px 10px 3px;
+    }
+    .sig-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13.5px;
+      color: #1e293b;
+      font-weight: 500;
+    }
+    .sig-title {
+      font-size: 11.5px;
+      color: #64748b;
+      margin-top: 1px;
+    }
+
+    /* Action buttons */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      max-width: 1000px;
+      width: 100%;
+    }
+    .actions button {
+      flex: 1 1 200px;
+      max-width: 240px;
+      padding: 14px 18px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: white;
+      transition: transform 0.15s, box-shadow 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .actions button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+    .btn-pdf { background: #b91c1c; }
+    .btn-jpg { background: #1d4ed8; }
+    .btn-post { background: #0a66c2; }
+    .btn-cert { background: #0077b5; }
+
+    .error-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    @media (max-width: 1040px) {
+      #certificate {
+        transform-origin: top center;
+        transform: scale(0.92);
+      }
+    }
+    @media (max-width: 960px) {
+      #certificate {
+        transform: scale(0.78);
+      }
+    }
+    @media (max-width: 820px) {
+      #certificate {
+        transform: scale(0.62);
+      }
+    }
+    @media (max-width: 680px) {
+      #certificate {
+        transform: scale(0.48);
+      }
+      .actions button {
+        flex: 1 1 100%;
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Your Briticana Certificate</h1>
+    <p>Download or share your official certificate of participation</p>
+  </div>
+
+  <div id="app">
+    <!-- Certificate will be injected here -->
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/gh/pkoretic/pdf417-generator@master/lib/pdf417.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    // ---------- Decode data from URL ----------
+    function getData() {
+      const params = new URLSearchParams(window.location.search);
+      const d = params.get('d');
+      if (!d) return null;
+      try {
+        // base64url → base64
+        let b64 = d.replace(/-/g, '+').replace(/_/g, '/');
+        while (b64.length % 4) b64 += '=';
+        const json = decodeURIComponent(escape(atob(b64)));
+        return JSON.parse(json);
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    }
+
+    function renderCertificate(data) {
+      const { n: name, i: internship, t: tenure, r: ref } = data;
+
+      const app = document.getElementById('app');
+      app.innerHTML = `
+        <div id="certificate-wrapper">
+          <div id="certificate">
+            <div class="border-outer"></div>
+            <div class="border-inner"></div>
+            <img src="assets/logo.png" class="watermark" alt="" crossorigin="anonymous" />
+
+            <div class="content">
+              <div class="title">Certificate of Participation</div>
+              <div class="presented">THIS CERTIFICATE IS PROUDLY PRESENTED TO</div>
+              <div class="candidate-name">${escapeHtml(name)}</div>
+              <div class="body-text">
+                With sincere appreciation, this Certificate is awarded in recognition of the successful completion of the 
+                <strong>${escapeHtml(internship)}</strong> internship (${escapeHtml(tenure)}).
+                <br><br>
+                It acknowledges the recipient's professionalism, dedication, commitment to continuous learning, and 
+                successful completion of the prescribed internship program.
+              </div>
+            </div>
+
+            <div class="footer-area">
+              <div class="barcode-area">
+                <canvas id="barcodeCanvas" width="340" height="140"></canvas>
+              </div>
+              <div class="logo-area">
+                <img src="assets/logo.png" alt="Briticana" crossorigin="anonymous" />
+              </div>
+              <div class="signature-area">
+                <img src="assets/signature.png" alt="Signature" crossorigin="anonymous" />
+                <div class="sig-line"></div>
+                <div class="sig-name">Thilvas.Peter</div>
+                <div class="sig-title">Project Head</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-pdf" onclick="downloadPDF()">📄 Download PDF</button>
+          <button class="btn-jpg" onclick="downloadJPG()">🖼️ Download JPG</button>
+          <button class="btn-post" onclick="linkedinPost()">🔗 LinkedIn Post</button>
+          <button class="btn-cert" onclick="linkedinCertificate()">✅ Add LinkedIn Certificate</button>
+        </div>
+      `;
+
+      // Draw PDF417 – Reference ID is ONLY inside the barcode
+      const barcodePayload = [
+        `NAME:${name}`,
+        `REF:${ref}`,
+        `ORG:Briticana`,
+        `INTERNSHIP:${internship}`,
+        `TENURE:${tenure}`
+      ].join('|');
+
+      const canvas = document.getElementById('barcodeCanvas');
+      try {
+        PDF417.draw(barcodePayload, canvas, 2.0, 4);
+        canvas.style.width = '165px';
+        canvas.style.height = 'auto';
+      } catch (err) {
+        console.error('Barcode generation failed', err);
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#000';
+        ctx.font = '12px monospace';
+        ctx.fillText('Briticana', 10, 30);
+      }
+
+      // store for downloads
+      window._certData = data;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    async function capture() {
+      const el = document.getElementById('certificate');
+      return await html2canvas(el, {
+        scale: 2.5,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        width: 1000,
+        height: 707
+      });
+    }
+
+    async function downloadJPG() {
+      const canvas = await capture();
+      const link = document.createElement('a');
+      link.download = `Briticana_Certificate_${window._certData.r}.jpg`;
+      link.href = canvas.toDataURL('image/jpeg', 0.93);
+      link.click();
+    }
+
+    async function downloadPDF() {
+      const canvas = await capture();
+      const imgData = canvas.toDataURL('image/jpeg', 0.93);
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'px',
+        format: [1000, 707]
+      });
+      pdf.addImage(imgData, 'JPEG', 0, 0, 1000, 707);
+      pdf.save(`Briticana_Certificate_${window._certData.r}.pdf`);
+    }
+
+    function linkedinPost() {
+      const { n, i, r } = window._certData;
+      const text = encodeURIComponent(
+        `Proud to share that I have successfully completed the "${i}" internship at Briticana!\n\n` +
+        `This remote European internship gave me valuable professional experience and growth.\n\n` +
+        `#Briticana #RemoteInternship #EuropeanExperience #CertificateOfParticipation`
+      );
+      window.open(`https://www.linkedin.com/feed/?shareActive=true&text=${text}`, '_blank');
+    }
+
+    function linkedinCertificate() {
+      const { i, r } = window._certData;
+      const year = new Date().getFullYear();
+      const month = new Date().getMonth() + 1;
+
+      const params = new URLSearchParams({
+        startTask: 'CERTIFICATION_NAME',
+        name: i + ' Internship',
+        organizationName: 'Briticana',
+        issueYear: String(year),
+        issueMonth: String(month)
+      });
+      window.open(`https://www.linkedin.com/profile/add?${params.toString()}`, '_blank');
+    }
+
+    // ---------- Init ----------
+    const data = getData();
+    if (!data || !data.n || !data.i || !data.t || !data.r) {
+      document.getElementById('app').innerHTML = `
+        <div class="error-box">
+          <strong>Invalid or missing certificate link</strong><br><br>
+          Please use the link that was shared with you by Briticana.
+        </div>
+      `;
+    } else {
+      renderCertificate(data);
+    }
+  </script>
+</body>
+</html>
